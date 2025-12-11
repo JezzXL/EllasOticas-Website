@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
 import { fadeInUp } from "@/lib/gsap/animations";
 
 interface PageTransitionProps {
