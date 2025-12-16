@@ -140,32 +140,16 @@ export default function StoreLocation() {
           {/* Mapa */}
           <div ref={mapRef} className="relative">
             <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
-              {/* Placeholder do Mapa */}
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <MapPin size={48} className="text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">
-                    Mapa da localização
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    Integrar com Google Maps
-                  </p>
-                </div>
-              </div>
-              
-              {/* Google Maps Embed - Descomente e adicione sua API key */}
-              {/*
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d283.82794587707497!2d-44.29700017822561!3d-2.533817304542957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1spt-BR!2sbr!4v1765498738576!5m2!1spt-BR!2sbr"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Localização Ellas Óticas"
-              />
-              */}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d455.3055187373931!2d-44.29733231605096!3d-2.5336882283348685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7f68f5c30b1cc3f%3A0xd2c4b923d5c80c40!2sELASOTICA!5e1!3m2!1spt-BR!2sbr!4v1765918874415!5m2!1spt-BR!2sbr"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Localização Casa Econômica"
+                />
 
               {/* Overlay com marca */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg">
