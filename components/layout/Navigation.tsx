@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
@@ -115,6 +115,7 @@ const navItems: NavItem[] = [
 export default function Navigation({ mobile, onItemClick }: NavigationProps) {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const isActive = (href?: string, submenu?: SubMenuItem[]) => {
     if (href) return pathname === href;
@@ -125,12 +126,33 @@ export default function Navigation({ mobile, onItemClick }: NavigationProps) {
   };
 
   const handleMouseEnter = (label: string) => {
+    // Cancela qualquer timeout pendente
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    // Abre imediatamente o novo menu
     setOpenMenu(label);
   };
 
   const handleMouseLeave = () => {
-    setOpenMenu(null);
+    // Adiciona um pequeno delay antes de fechar
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setOpenMenu(null);
+    }, 150);
   };
+
+  // Limpa o timeout quando o componente desmonta
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   if (mobile) {
     return (
@@ -177,7 +199,7 @@ export default function Navigation({ mobile, onItemClick }: NavigationProps) {
           {/* Menu Item */}
           <button
             className={cn(
-              "text-sm font-medium transition-all duration-300 relative flex items-center gap-1 py-2",
+              "text-sm font-medium transition-all duration-300 relative flex items-center gap-1 py-6",
               isActive(item.href, item.submenu)
                 ? "text-gray-900"
                 : "text-gray-600 hover:text-gray-900"
@@ -197,7 +219,11 @@ export default function Navigation({ mobile, onItemClick }: NavigationProps) {
 
           {/* Dropdown Menu */}
           {item.submenu && openMenu === item.label && (
-            <div className="fixed left-0 right-0 top-20 z-50">
+            <div 
+              className="fixed left-0 right-0 top-20 z-50"
+              onMouseEnter={() => handleMouseEnter(item.label)}
+              onMouseLeave={handleMouseLeave}
+            >
               <div className="bg-white shadow-2xl border-t border-gray-100">
                 <div className="max-w-7xl mx-auto px-8 py-12">
                   <div className="grid grid-cols-[300px_1fr] gap-12">
@@ -211,8 +237,9 @@ export default function Navigation({ mobile, onItemClick }: NavigationProps) {
                           <Link
                             key={subItem.href}
                             href={subItem.href}
+                            onClick={() => setOpenMenu(null)}
                             className={cn(
-                              "block py-2 text-sm transition-colors border-b border-gray-200 last:border-0",
+                              "block py-2 text-sm transition-colors border-b border-gray-200 last:border-0 hover:translate-x-1",
                               pathname === subItem.href
                                 ? "text-gray-900 font-medium"
                                 : "text-gray-600 hover:text-gray-900",
@@ -236,36 +263,21 @@ export default function Navigation({ mobile, onItemClick }: NavigationProps) {
                         {item.images.map((image, index) => (
                           <div
                             key={index}
-                            className="relative aspect-square rounded-2xl overflow-hidden group/img cursor-pointer"
+                            className="relative aspect-square rounded-2xl overflow-hidden group/img cursor-pointer transition-transform hover:scale-105"
                           >
                             {/* Placeholder */}
-                            <div className="w-full h-full bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center transition-all group-hover/img:from-gray-200 group-hover/img:to-gray-300">
                               <div className="text-center">
                                 <div className="text-gray-400 text-sm mb-2">
                                   {image.alt}
                                 </div>
                                 {image.label && (
-                                  <div className="text-2xl font-bold text-gray-600">
+                                  <div className="text-2xl font-bold text-gray-600 transition-colors group-hover/img:text-gray-800">
                                     {image.label}
                                   </div>
                                 )}
                               </div>
                             </div>
-                            {/* 
-                            <Image
-                              src={image.src}
-                              alt={image.alt}
-                              fill
-                              className="object-cover group-hover/img:scale-110 transition-transform duration-500"
-                            />
-                            {image.label && (
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                                <span className="text-white text-2xl font-bold tracking-wider">
-                                  {image.label}
-                                </span>
-                              </div>
-                            )}
-                            */}
                           </div>
                         ))}
                       </div>
